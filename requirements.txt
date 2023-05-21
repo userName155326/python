@@ -1,5 +1,0 @@
-nmap
-scapy
-colorama
-timeit
-datetime
