@@ -2,7 +2,7 @@ import socket
 import subprocess
 
 def aceptar_conexiones():
-    host = '192.168.1.95'
+    host = '192.168.1.38'
     port = 1234 # Puerto por el que se transmite la información
 
     # Crear socket
