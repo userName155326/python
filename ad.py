@@ -1,29 +1,55 @@
 import socket
 import threading
 
-def handle_client(client_socket, client_address):
-    while True:
-        try:
-            message = client_socket.recv(1024).decode()
-            print(f"Mensaje recibido de {client_address}: {message}")
-        except ConnectionResetError:
-            print(f"Conexión perdida con {client_address}")
-            break
+clientes = []
+green_color_code = "\033[32m"
+reset_color_code = "\033[0m"
 
-def start_server():
-    host = '192.168.1.38'
+def manejar_cliente(cliente, cliente_id):
+    while True:
+        mensaje = cliente.recv(1024).decode()
+        if mensaje == 'salir':
+            break
+        print(f"Cliente {cliente_id}: {mensaje}")
+
+    cliente.close()
+    clientes.remove(cliente)
+
+def enviar_mensaje_a_todos(mensaje):
+    for cliente in clientes:
+        cliente.send(mensaje.encode())
+
+def servidor():
+    host = '192.168.1.95'
     port = 1234
 
-    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_socket.bind((host, port))
-    server_socket.listen(2)  # Acepta un máximo de 2 conexiones
-    print(f"Servidor escuchando en {host}:{port}")
+    servidor_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    servidor_socket.bind((host, port))
+    servidor_socket.listen(2)
+
+    print("Servidor iniciado. Esperando conexiones...")
 
     while True:
-        client_socket, client_address = server_socket.accept()
-        print(f"Cliente conectado desde {client_address}")
+        cliente, direccion = servidor_socket.accept()
+        clientes.append(cliente)
 
-        client_thread = threading.Thread(target=handle_client, args=(client_socket, client_address))
-        client_thread.start()
+        print(f"Cliente conectado: {direccion}")
 
-start_server()
+        thread = threading.Thread(target=manejar_cliente, args=(cliente, len(clientes)))
+        thread.start()
+
+        if len(clientes) == 2:
+            break
+
+    while True:
+        mensaje = input(f"[{green_color_code+'+'+reset_color_code}]Command: ")
+        if mensaje == 'salir':
+            break
+        enviar_mensaje_a_todos(mensaje)
+
+    for cliente in clientes:
+        cliente.close()
+
+    servidor_socket.close()
+
+servidor()
