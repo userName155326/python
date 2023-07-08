@@ -20,7 +20,7 @@ def enviar_mensaje_a_todos(mensaje):
         cliente.send(mensaje.encode())
 
 def servidor():
-    host = '192.168.1.38'
+    host = '192.168.1.39'
     port = 1234
 
     servidor_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
